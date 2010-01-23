@@ -9,19 +9,6 @@ require 'config'
 require 'ostruct'
 require 'logger'
 
-class Array
-  def joinizzle
-    return "" if empty?
-    
-    array = self.clone
-    last = array.pop
- 
-    return last if array.empty?
- 
-    "#{array.join(", ")} and #{last}"
-  end
-end
-
 begin
   config = Intweet::Config.new
 
@@ -34,6 +21,19 @@ begin
   } 
 
   Daemons.run_proc('consumer', options) do
+    class Array
+      def joinizzle
+        return "" if empty?
+
+        array = self.clone
+        last = array.pop
+
+        return last if array.empty?
+
+        "#{array.join(", ")} and #{last}"
+      end
+    end
+    
     while true
       puts "Checking delivery queue..."
 
