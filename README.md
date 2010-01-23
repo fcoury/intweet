@@ -35,11 +35,11 @@ $ cp config.yml.example config.yml
   <dt>twitter_password</dt>
   <dd>Your twitter password</dd>
   <dt>notify_by_prowl</dt>
-  <dd>If <pre>true</pre>, uses Prowl for iPhone to get notifications</dd>
+  <dd>If *true*, uses Prowl for iPhone to get notifications</dd>
   <dt>prowl_apikey</dt>
   <dd>Your Prowl <a href="http://prowl.weks.net/api.php">API Key</a> (set it up <a href="https://prowl.weks.net/settings.php">here</a>)</dd>
   <dt>notify_by_email</dt>
-  <dd>If <pre>true<pre>, sends emails notifications</dd>
+  <dd>If *true*, sends emails notifications</dd>
   <dt>email</dt>
   <dd>Email to receive the notifications</dd>
   <dt>gmail_user</dt>
