@@ -3,8 +3,9 @@
 # Sun Nov 22 20:46:43 -0200 2009
 #
 
+dir=`pwd`
 apt-get install -y cronolog
-gem install tweetstream redis prowl fcoury-gmail yaml tlsmail
+gem install tweetstream redis prowl fcoury-gmail tlsmail --no-rdoc --no-ri
 
 cd /usr/src
 wget -q http://redis.googlecode.com/files/redis-1.02.tar.gz
@@ -24,10 +25,11 @@ chmod +x /etc/init.d/redis.sh
 bash -c "nohup /usr/bin/redis-server /etc/redis.conf | /usr/bin/cronolog /var/log/redis/redis.%Y-%m-%d.log 2>&1 &"
 sed -i "s/loglevel debug/loglevel notice/g" /etc/redis.conf
 
+cd $dir
 mkdir log
 
 echo "#! /bin/bash
-cd `pwd`
+cd $dir
 ruby producer.rb start
 ruby consumer.rb start" > /etc/init.d/intweet.sh
 
@@ -38,6 +40,6 @@ ruby consumer.rb stop" > stop
 chmod +x /etc/init.d/intweet.sh
 chmod +x stop
 
-nohup /etc/init.d/redis.sh
-nohup /etc/init.d/intweet.sh
+nohup /etc/init.d/redis.sh > /dev/null 2>&1
+nohup /etc/init.d/intweet.sh > /dev/null 2>&1
 

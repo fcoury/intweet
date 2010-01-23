@@ -2,3 +2,4 @@ log/*
 *.log
 *.pid
 config.yml
+stop
