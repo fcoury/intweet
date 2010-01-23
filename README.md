@@ -14,4 +14,7 @@ $ ./install.sh
 $ cp config.yml.example config.yml
 </pre>
 
-  
+<dl>
+  <dt>terms</dt>
+  <dd>Array of keywords to monitor</dd>
+</dl>  
