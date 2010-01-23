@@ -62,7 +62,7 @@ begin
       body << "... and #{total - 10} more ..." if total > 10
 
       if alerts.empty?
-        ThisLogger.log.info "Nothing to deliver..."
+        puts "Nothing to deliver..."
       else
         alerts.uniq!
 
