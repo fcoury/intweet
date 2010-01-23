@@ -1,0 +1,10 @@
+terms: ['webbynode', 'fcoury']
+twitter_user: twit
+twitter_password: mypass
+notify_by_prowl: true
+prowl_apikey: youasbjdahsdabdhiadbasdbas
+notify_by_email: true
+email: user@me.com
+gmail_user: user
+gmail_password: pass
+send_period: 60

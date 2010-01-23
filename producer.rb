@@ -3,15 +3,10 @@ require 'tweetstream'
 require 'redis'
 require 'yaml'
 require 'config'
-require 'logger'
 
-config = Intweet::Config.new
-logger = Logger.new("producer.log", "daily")
-
-logger.info "Started. Monitoring terms: #{config.terms.inspect}"
-
+c = Intweet::Config.new
 r = Redis.new
-TweetStream::Daemon.new('fcoury', 'tempra13twit').track(config.terms) do |status|
-  logger.info "Found: #{status}"
+
+TweetStream::Daemon.new(c.twitter_user, c.twitter_password).track(*c.terms) do |status|
   r.push_tail 'tweets', status.to_yaml
 end

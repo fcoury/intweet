@@ -2,60 +2,107 @@ require 'rubygems'
 require 'tweetstream'
 require 'daemons'
 require 'gmail_sender'
+require 'prowl'
 require 'redis'
 require 'yaml'
 require 'config'
 require 'ostruct'
 require 'logger'
 
+class Array
+  def joinizzle
+    return "" if empty?
+    
+    array = self.clone
+    last = array.pop
+ 
+    return last if array.empty?
+ 
+    "#{array.join(", ")} and #{last}"
+  end
+end
+
 begin
   config = Intweet::Config.new
 
   r = Redis.new
 
-  Daemons.run_proc('consumer', :multiple => true) do
-    logger = Logger.new("consumer-#{$$}.log", "daily")
-    logger.info "Checking delivery queue..."
+  options = { 
+    :dir => "log", 
+    :log_output => true, 
+    :dir_mode => :normal 
+  } 
 
-    alerts  = []
-    body    = []
-    terms   = []
-    total   = 0
+  Daemons.run_proc('consumer', options) do
+    while true
+      puts "Checking delivery queue..."
 
-    while tweet_str = r.pop_head('tweets')
-      tweet = YAML.load(tweet_str)
+      alerts  = []
+      body    = []
+      terms   = []
+      users   = []
+      total   = 0
 
-      config.terms.each do |term|
-        if tweet.text =~ /#{term}/
-          if total < 10
-            alerts << term 
-            body << "#{tweet.user.screen_name}: #{tweet.text}\n\n"
+      while tweet_str = r.pop_head('tweets')
+        tweet = YAML.load(tweet_str)
+
+        config.terms.each do |term|
+          if tweet.text =~ /#{term}/
+            if total < 10
+              alerts << term 
+              body << "#{tweet.user.screen_name}: #{tweet.text}\n\n"
+              users << tweet.user.screen_name
+            end
+
+            total += 1
           end
-
-          total += 1
         end
       end
+
+      body << "... and #{total - 10} more ..." if total > 10
+
+      if alerts.empty?
+        ThisLogger.log.info "Nothing to deliver..."
+      else
+        alerts.uniq!
+
+        if config.notify_by_email
+          subject = "[intweet] Alerts for #{alerts.joinizzle}"
+          puts "Sending: #{subject} with #{total} tweets"
+          g = GmailSender.new(config.gmail_user, config.gmail_password)
+          g.send(config.email, subject, body.join(""))
+        end
+        
+        if config.notify_by_prowl
+          str = []
+          users.each do |user|
+            str << user
+            if str.size == users.size
+              break
+            elsif str.size > 3
+              str << "#{total - 3} more..."
+              break
+            end
+          end
+
+          description = "Tweets from: #{str.joinizlle}"
+
+          puts "Sending prowl: #{description}"
+          Prowl.add(
+               :apikey => "d3e9dcf1f3e276767e4868da841d349c56b17608",
+               :application => "Intweet Alerts",
+               :event => "Alerts: #{alerts.joinizzle}",
+               :description => description
+          )
+        end
+        
+      end
+      
+      puts "Sleeping..."
+      sleep config.send_period
+      puts ""
     end
-  
-    body << "... and #{total - 10} more ..." if total > 10
-
-    if alerts.empty?
-      logger.info "Nothing to deliver..."
-    else
-      alerts.uniq!
-
-      subject = "[intweet] Alerts for #{alerts.join(" ")}"
-
-      logger.info "Sending: #{subject} with #{total} tweets"
-
-      g = GmailSender.new(config.gmail_user, config.gmail_password)
-      g.send(config.email, subject, body.join(""))
-    end
-
-    logger.info "Sleeping..."
-    sleep config.send_period
-    logger.info ""
   end
 rescue
-  logger.error $!
+  puts $!
 end
