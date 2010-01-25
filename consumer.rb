@@ -34,7 +34,7 @@ options = {
 
 Daemons.send(:run_proc, 'consumer', options) do
   while true
-    puts "Checking delivery queue..."
+    # puts "Checking delivery queue..."
 
     alerts  = []
     body    = []
@@ -73,20 +73,24 @@ Daemons.send(:run_proc, 'consumer', options) do
       end
       
       if config.notify_by_prowl
-        str = []
-        users.uniq.each do |user|
-          str << user
-          if str.size == users.size
-            break
-          elsif str.size > 3
-            str << "#{total - 3} more..."
-            break
+        if total == 1
+          description = body
+        else
+          str = []
+          users.uniq.each do |user|
+            str << user
+            if str.size == users.size
+              break
+            elsif str.size > 3
+              str << "#{total - 3} more..."
+              break
+            end
           end
+
+          description = "Tweets from: #{str.joinizzle}"
         end
 
-        description = "Tweets from: #{str.joinizzle}"
-
-        puts "Sending prowl: #{description}"
+        puts "Sending prowl [Intweet Alerts - Alerts: #{alerts.joinizzle}]: #{description}"
         Prowl.add(
              :apikey => config.prowl_apikey,
              :application => "Intweet Alerts",
@@ -97,8 +101,8 @@ Daemons.send(:run_proc, 'consumer', options) do
       
     end
     
-    puts "Sleeping..."
+    # puts "Sleeping..."
     sleep config.send_period
-    puts ""
+    # puts ""
   end
 end
