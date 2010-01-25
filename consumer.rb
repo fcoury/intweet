@@ -34,8 +34,6 @@ options = {
 
 Daemons.send(:run_proc, 'consumer', options) do
   while true
-    # puts "Checking delivery queue..."
-
     alerts  = []
     body    = []
     terms   = []
@@ -60,9 +58,7 @@ Daemons.send(:run_proc, 'consumer', options) do
 
     body << "... and #{total - 10} more ..." if total > 10
 
-    if alerts.empty?
-      puts "Nothing to deliver..."
-    else
+    unless alerts.empty?
       alerts.uniq!
 
       if config.notify_by_email
@@ -101,8 +97,6 @@ Daemons.send(:run_proc, 'consumer', options) do
       
     end
     
-    # puts "Sleeping..."
     sleep config.send_period
-    # puts ""
   end
 end
