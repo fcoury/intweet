@@ -88,7 +88,7 @@ Daemons.send(:run_proc, 'consumer', options) do
 
         puts "Sending prowl: #{description}"
         Prowl.add(
-             :apikey => "d3e9dcf1f3e276767e4868da841d349c56b17608",
+             :apikey => config.prowl_apikey,
              :application => "Intweet Alerts",
              :event => "Alerts: #{alerts.joinizzle}",
              :description => description
