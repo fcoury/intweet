@@ -74,7 +74,7 @@ Daemons.send(:run_proc, 'consumer', options) do
       
       if config.notify_by_prowl
         str = []
-        users.each do |user|
+        users.uniq.each do |user|
           str << user
           if str.size == users.size
             break
