@@ -44,7 +44,7 @@ Daemons.send(:run_proc, 'consumer', options) do
       tweet = YAML.load(tweet_str)
 
       config.terms.each do |term|
-        if tweet.text =~ /#{term}/
+        if tweet.downcase.text =~ /#{term.downcase}/
           if total < 10
             alerts << term 
             body << "#{tweet.user.screen_name}: #{tweet.text}\n\n"
