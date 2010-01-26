@@ -44,7 +44,7 @@ Daemons.send(:run_proc, 'consumer', options) do
       tweet = YAML.load(tweet_str)
 
       config.terms.each do |term|
-        if tweet.downcase.text =~ /#{term.downcase}/
+        if tweet.text.downcase =~ /#{term.downcase}/
           if total < 10
             alerts << term 
             body << "#{tweet.user.screen_name}: #{tweet.text}\n\n"
@@ -83,7 +83,7 @@ Daemons.send(:run_proc, 'consumer', options) do
             end
           end
 
-          description = "Tweets from: #{str.joinizzle}"
+          description = "#{total} Tweets from: #{str.joinizzle}"
         end
 
         puts "Sending prowl [Intweet Alerts - Alerts: #{alerts.joinizzle}]: #{description}"
