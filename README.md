@@ -2,6 +2,9 @@
 
 I needed something to keep me posted on <a href="http://webbynode.com">Webbynode</a>'s-related twitter posts and found out that there were some Apps on AppStore that would charge you .99 EUR per keyword. Nah. I Installed Prowl for USD 2.99 instead so I can get any notifications I can take, straight from a Ruby daemon. Then I just deployed this to a Webby...
 
+<img src="http://fcoury.info/intweet.jpg">
+<img src="http://fcoury.info/intweet-prowl.jpg">
+
 *Disclaimer:* The code is very dirty but works for my needs :)
 
 # Prerequisites
